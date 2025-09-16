@@ -4,6 +4,7 @@ $font-size: 30px;
 $font-color: #000;
 $hover-color: #ffbfcb;
 $border: 1px solid black;
+$calendar-padding: 10px;
 
 * {
   box-sizing: border-box;
@@ -19,16 +20,17 @@ body {
 }
 
 .calendar {
-  display: grid;
-  grid-template-columns: repeat(7, $day-size);
+  display: flex;
+  flex-wrap: wrap;
   gap: $gap;
-  width: calc($day-size * 7 + $gap * 6);
+  width: calc($day-size * 7 + $gap * 6 + $calendar-padding * 2);
+  padding: 0 $calendar-padding;
 
   &__day {
     width: $day-size;
     height: $day-size;
     background-color: #eee;
-    border:$border ;
+    border: $border;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -38,7 +40,6 @@ body {
     transition:
       transform 0.5s,
       background-color 0.5s;
-    position: relative;
 
     &:hover {
       cursor: pointer;
@@ -46,6 +47,7 @@ body {
       transform: translateY(-20px);
     }
 
+    // Автогенерация чисел 1..31
     @for $i from 1 through 31 {
       &:nth-child(#{$i})::before {
         content: '#{$i}';
@@ -53,6 +55,7 @@ body {
     }
   }
 
+  // Отступ первого дня недели (только через margin-left)
   $days: (
     mon: 1,
     tue: 2,
@@ -66,11 +69,12 @@ body {
   @each $day, $pos in $days {
     &--start-day-#{$day} {
       .calendar__day:nth-child(1) {
-        grid-column-start: $pos;
+        margin-left: calc(($pos - 1) * ($day-size + $gap));
       }
     }
   }
 
+  // Длина месяца (28..31)
   @for $length from 28 through 31 {
     &--month-length-#{$length} {
       .calendar__day:nth-child(n + #{$length + 1}) {
